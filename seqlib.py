@@ -3,11 +3,11 @@ import regex as re
 import itertools
 
 # Input file is a txt with a single string of 0s and 1s
-f = open('sample2.txt', 'r')
+f = open('sample.txt', 'r')
 s = f.read()
 
 # Algorithm Parameters
-context_tree_size = 5
+context_tree_size = 3
 eps = .05
 
 # CONTEXT IS RECEIVED ON CONDITIONAL PROBABILITY NOTATION
@@ -49,7 +49,10 @@ for i in range(1, context_tree_size):
 
                 temp = max(temp, abs(p(a, context, s) - p(a, context + b, s)))
 
-        if (eps > temp):
+
+        print(temp, context)
+
+        if (eps < temp):
             print (context + ' is NOT a context.')
             discarted.append(context)
         else:
@@ -64,7 +67,6 @@ for i in range(1, context_tree_size):
     candidate_contexts = []
     for context in discarted:
         candidate_contexts = candidate_contexts + [context + "".join(seq) for seq in itertools.product("01", repeat=1)]
-
 # Print final context tree
 print("Final Context Tree: ")
 print(context_tree)
@@ -73,5 +75,4 @@ print(context_tree)
 print("Max Likelihood:")
 for context in context_tree:
     print("P(0|" + context + ")", p("0", context, s))
-
 
