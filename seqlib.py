@@ -8,11 +8,13 @@ s = f.read()
 
 # Algorithm Parameters
 context_tree_size = 5
-delta = .05
+eps = .05
 
 # CONTEXT IS RECEIVED ON CONDITIONAL PROBABILITY NOTATION
 # i.e. THE OPPOSITE AS IS WRITTEN IN THE STRING
 # returns max likelihood estimation of char given context in a sequence s
+
+
 def p(char, context, s):
 
 
@@ -40,14 +42,14 @@ for i in range(1, context_tree_size):
 
     for context in candidate_contexts:
 
-        temp = -10000
+        temp = 0
 
         for a in ["0", "1"]:
             for b in ["0", "1"]:
 
                 temp = max(temp, abs(p(a, context, s) - p(a, context + b, s)))
 
-        if (delta < temp):
+        if (eps > temp):
             print (context + ' is NOT a context.')
             discarted.append(context)
         else:
@@ -64,9 +66,11 @@ for i in range(1, context_tree_size):
         candidate_contexts = candidate_contexts + [context + "".join(seq) for seq in itertools.product("01", repeat=1)]
 
 # Print final context tree
+print("Final Context Tree: ")
 print(context_tree)
 
-
+# Max. Likelihood of transitions
+print("Max Likelihood:")
 for context in context_tree:
     print("P(0|" + context + ")", p("0", context, s))
 
