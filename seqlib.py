@@ -2,77 +2,105 @@ from __future__ import division
 import regex as re
 import itertools
 
-# Input file is a txt with a single string of 0s and 1s
-f = open('sample.txt', 'r')
-s = f.read()
+import json
 
-# Algorithm Parameters
-context_tree_size = 3
-eps = .05
+#load json parameters 
+with open("treeparams") as params_file:
+    params = json.load(params_file)
+ntrees=len(params['trees'])
+nsamples=params['nsamples']
+ssample=params['sizesample']
 
-# CONTEXT IS RECEIVED ON CONDITIONAL PROBABILITY NOTATION
-# i.e. THE OPPOSITE AS IS WRITTEN IN THE STRING
-# returns max likelihood estimation of char given context in a sequence s
+eps = params['eps']
+
 
 
 def p(char, context, s):
-
-
     up_count = (len([1 for match in re.findall(re.compile(context[::-1] + char ), s, overlapped=True)]))
 
     # I have no idea why s[:-2] works. It should be -1
-    down_count = (len([1 for match in re.findall(re.compile(context[::-1]), s[:-2], overlapped=True)]))
+    down_count = (len([1 for match in re.findall(re.compile(context[::-1]), s[:-1], overlapped=True)]))
 
     if (up_count == 0):
         return 0
-
+    #print('----- '+char+"|"+context+" = "+str(up_count)+"/"+str(down_count)+ "valor="+str(up_count / down_count) )        
     return up_count / down_count
 
 
-# Now let's use the context algorithm
+for t in range(0,ntrees):
+    for ns in range(0,nsamples):
+        # Input file is a txt with a single string of 0s and 1s
+        print('*************************************************************')
+        print("Statistics for sample: t"+str(t)+"sample"+str(ns)+".sample")
+        f = open("t"+str(t)+"sample"+str(ns)+".sample", "r")
+        s = f.read().rstrip()
+        
+        # Algorithm Parameters
+        height=params['trees'][t]['height']
+        context_tree_size = height + 1
 
-context_tree = []
+        # CONTEXT IS RECEIVED ON CONDITIONAL PROBABILITY NOTATION
+        # i.e. THE OPPOSITE AS IS WRITTEN IN THE STRING
+        # returns max likelihood estimation of char given context in a sequence s
 
-# first level
-candidate_contexts = ["0", "1"]
+        # Now let's use the context algorithm
 
-for i in range(1, context_tree_size):
+        context_tree = []
 
-    discarted = []
+        # first level
+        candidate_contexts = ["0", "1"]
 
-    for context in candidate_contexts:
+        for i in range(1, context_tree_size):
 
-        temp = 0
+            discarted = []
 
-        for a in ["0", "1"]:
-            for b in ["0", "1"]:
+            for context in candidate_contexts:
 
-                temp = max(temp, abs(p(a, context, s) - p(a, context + b, s)))
+                temp = 0
+
+                for a in ["0", "1"]:
+                    for b in ["0", "1"]:
 
 
-        print(temp, context)
+                        temp = max(temp, abs(p(a, context, s) - p(a, context + b, s)))
 
-        if (eps < temp):
-            print (context + ' is NOT a context.')
-            discarted.append(context)
-        else:
-            print (context + ' is a context.')
-            # this should not happen
-            if context not in context_tree:
-                context_tree.append(context)
 
-    # If this is not a context, then we append one more character and iterate again
-    # e.g. if 1 is not a context, we have as candidates 10 and 11 for the next iteration
-    # if 0 is a context we don't even test 01 and 00
-    candidate_contexts = []
-    for context in discarted:
-        candidate_contexts = candidate_contexts + [context + "".join(seq) for seq in itertools.product("01", repeat=1)]
-# Print final context tree
-print("Final Context Tree: ")
-print(context_tree)
+                print(temp, context)
 
-# Max. Likelihood of transitions
-print("Max Likelihood:")
-for context in context_tree:
-    print("P(0|" + context + ")", p("0", context, s))
+                if (eps < temp):
+                    print (context + '  NOT PRUNE.')
+                    # if its childs are leaves then are context 
 
+                    if len(context)==height-1:
+                        context_tree.append("0"+context)
+                        context_tree.append("1"+context)
+                    else:
+
+                        discarted.append(context)
+                else:
+
+                    print (context + ' PRUNE.')
+                    #Prune its childs thes context is a left and a valid context
+
+                    if context not in context_tree:
+                        context_tree.append(context)
+
+            # If this is not a context, then we append one more character and iterate again
+            # e.g. if 1 is not a context, we have as candidates 01 and 11 for the next iteration
+            # if 0 is a context we don't even test 01 and 00
+            candidate_contexts = []
+
+            #create the next tree level 
+            for context in discarted:
+                candidate_contexts.append("0"+context)
+                candidate_contexts.append("1"+context)
+
+
+        # Print final context tree
+        print("Final Context Tree: ")
+        print(context_tree)
+
+        # Max. Likelihood of transitions
+        print("Max Likelihood:")
+        for context in context_tree:
+            print("P(0|" + context + ")", p("0", context, s))
