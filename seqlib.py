@@ -67,33 +67,30 @@ for t in range(0,ntrees):
 
                 print(temp, context)
 
-                if (eps < temp):
-                    print (context + '  NOT PRUNE.')
-                    # if its childs are leaves then are context 
-
+                if (eps > temp):                    
+                    # if we are at the last level of the tree we want to generate
+                    # we just take this non context and add it's children to the tree
                     if len(context)==height-1:
-                        context_tree.append("0"+context)
-                        context_tree.append("1"+context)
+                        context_tree.append(context + "0")
+                        context_tree.append(context + "1")
+                    # if not then we will try to check if his children are contexts
                     else:
 
                         discarted.append(context)
                 else:
-
-                    print (context + ' PRUNE.')
-                    #Prune its childs thes context is a left and a valid context
-
+                    # not much to do here
                     if context not in context_tree:
                         context_tree.append(context)
 
             # If this is not a context, then we append one more character and iterate again
-            # e.g. if 1 is not a context, we have as candidates 01 and 11 for the next iteration
+            # e.g. if 1 is not a context, we have as candidates 10 and 11 for the next iteration
             # if 0 is a context we don't even test 01 and 00
             candidate_contexts = []
 
             #create the next tree level 
             for context in discarted:
-                candidate_contexts.append("0"+context)
-                candidate_contexts.append("1"+context)
+                candidate_contexts.append(context + "0")
+                candidate_contexts.append(context + "1")
 
 
         # Print final context tree
