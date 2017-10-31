@@ -4,8 +4,8 @@ import itertools
 
 import json
 
-#load json parameters 
-with open("treeparams") as params_file:
+#load json parameters
+with open("config/treeparams") as params_file:
     params = json.load(params_file)
 ntrees=len(params['trees'])
 nsamples=params['nsamples']
@@ -23,7 +23,7 @@ def p(char, context, s):
 
     if (up_count == 0):
         return 0
-    #print('----- '+char+"|"+context+" = "+str(up_count)+"/"+str(down_count)+ "valor="+str(up_count / down_count) )        
+    #print('----- '+char+"|"+context+" = "+str(up_count)+"/"+str(down_count)+ "valor="+str(up_count / down_count) )
     return up_count / down_count
 
 
@@ -34,7 +34,7 @@ for t in range(0,ntrees):
         print("Statistics for sample: t"+str(t)+"sample"+str(ns)+".sample")
         f = open("t"+str(t)+"sample"+str(ns)+".sample", "r")
         s = f.read().rstrip()
-        
+
         # Algorithm Parameters
         height=params['trees'][t]['height']
         context_tree_size = height + 1
@@ -67,7 +67,7 @@ for t in range(0,ntrees):
 
                 print(temp, context)
 
-                if (eps > temp):                    
+                if (eps > temp):
                     # if we are at the last level of the tree we want to generate
                     # we just take this non context and add it's children to the tree
                     if len(context)==height-1:
@@ -87,7 +87,7 @@ for t in range(0,ntrees):
             # if 0 is a context we don't even test 01 and 00
             candidate_contexts = []
 
-            #create the next tree level 
+            #create the next tree level
             for context in discarted:
                 candidate_contexts.append(context + "0")
                 candidate_contexts.append(context + "1")

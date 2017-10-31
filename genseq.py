@@ -2,8 +2,8 @@ from __future__ import division
 import random
 import json
 
-#load json parameters 
-with open("treeparams") as params_file:
+#load json parameters
+with open("config/treeparams") as params_file:
     params = json.load(params_file)
 ntrees=len(params['trees'])
 nsamples=params['nsamples']
@@ -17,7 +17,7 @@ for t in range(0,ntrees):
     # probability of 0 given contexts
     contexts = params['trees'][t]['contexts']
     #create nsamples
-    for ns in range(0, nsamples):   
+    for ns in range(0, nsamples):
         # create file or overwrites it
         f = open("t"+str(t)+"sample"+str(ns)+".sample", "w+")
         #
