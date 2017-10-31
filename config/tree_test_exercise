@@ -1,0 +1,10 @@
+{"trees":
+  [{"height": 2,
+    "contexts": {"00": 0.33, "01": 0.33, "1": 0.375},
+    "outdir": "test_exercise",
+    "iniseq": "00"}
+   ],
+   "nsamples": 1,
+   "sizesample": 14,
+   "eps": 0.05
+}
