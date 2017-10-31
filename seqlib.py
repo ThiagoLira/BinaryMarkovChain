@@ -35,11 +35,12 @@ def p(char, context, s):
 
 
 for t in range(0,ntrees):
+    outdir = params["trees"][t]["outdir"]
     for ns in range(0,nsamples):
         # Input file is a txt with a single string of 0s and 1s
         print('*************************************************************')
         print("Statistics for sample: t"+str(t)+"sample"+str(ns)+".sample")
-        f = open("t"+str(t)+"sample"+str(ns)+".sample", "r")
+        f = open("samples/"+outdir+"/t"+str(t)+"sample"+str(ns)+".sample", "r")
         s = f.read().rstrip()
 
         # Algorithm Parameters
