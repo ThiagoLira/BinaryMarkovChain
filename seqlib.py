@@ -1,11 +1,18 @@
 from __future__ import division
 import regex as re
+import argparse
 import itertools
 
 import json
 
+# Read command line argument - configuration file
+parser = argparse.ArgumentParser()
+parser.add_argument("configfile", help="Path to configuration file.",
+    default="config/treeparams", nargs="?")
+configfile = parser.parse_args().configfile
+
 #load json parameters
-with open("config/treeparams") as params_file:
+with open(configfile) as params_file:
     params = json.load(params_file)
 ntrees=len(params['trees'])
 nsamples=params['nsamples']

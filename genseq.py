@@ -1,9 +1,16 @@
 from __future__ import division
 import random
 import json
+import os
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("configfile", help="Path to configuration file.",
+    default="config/treeparams", nargs="?")
+configfile = parser.parse_args().configfile
 
 #load json parameters
-with open("config/treeparams") as params_file:
+with open(configfile) as params_file:
     params = json.load(params_file)
 ntrees=len(params['trees'])
 nsamples=params['nsamples']
@@ -11,15 +18,19 @@ ssample=params['sizesample']
 
 print('******Generating '+str(nsamples)+ ' samples for ' + str(ntrees)+' trees******')
 
-
 for t in range(0,ntrees):
     random.seed(1337)
+
+    #create output directory if it does not exist.
+    outdir = params['trees'][t]['outdir']
+    os.makedirs("samples/"+outdir, exist_ok=True)
+
     # probability of 0 given contexts
     contexts = params['trees'][t]['contexts']
     #create nsamples
     for ns in range(0, nsamples):
         # create file or overwrites it
-        f = open("t"+str(t)+"sample"+str(ns)+".sample", "w+")
+        f = open("samples/"+outdir+"/t"+str(t)+"sample"+str(ns)+".sample", "w+")
         #
         # Buffer with last entries in sequence
         # we start with some initial conditions
