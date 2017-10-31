@@ -25,6 +25,10 @@ for t in range(0,ntrees):
     outdir = params['trees'][t]['outdir']
     os.makedirs("samples/"+outdir, exist_ok=True)
 
+    # initial sequence
+    iniseq = params['trees'][t]['iniseq']
+
+
     # probability of 0 given contexts
     contexts = params['trees'][t]['contexts']
     #create nsamples
@@ -34,11 +38,11 @@ for t in range(0,ntrees):
         #
         # Buffer with last entries in sequence
         # we start with some initial conditions
-        s = "01"
+        s = iniseq
 
         # same initial conditions on file
-        f.write("0")
-        f.write("1")
+        for digit in s:
+            f.write(digit)
 
         # we begin with 2 characters already written on the string
         count = len(s)
