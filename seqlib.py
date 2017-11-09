@@ -23,14 +23,15 @@ eps = params['eps']
 
 def generate_candidates(size):
     # Generate candidates on last level of context tree
-    return ["".join(seq) for seq in itertools.product("01", repeat=size)]
+    return ["".join(seq) for seq in itertools.product("01", repeat= size - 1)]
 
 
 def generate_next_level(removed_contexts):
     # for each string which is not a context,
     # we remove it's last digit (inverted notation) and create
     # a new list of context candidates
-    return list((map((lambda s: s[:-1]), removed_contexts)))
+    # we use set to get only unique new contexts
+    return list(set((map((lambda s: s[:-1]), removed_contexts))))
 
 
 def p(char, context, s):
@@ -71,30 +72,54 @@ for t in range(0, ntrees):
         # first level
         candidate_contexts = generate_candidates(context_tree_size)
 
-        for i in range(1, context_tree_size + 1):
+        print("Initial candidates: ", candidate_contexts)
+
+        for i in range(0, context_tree_size):
 
             discarted = []
 
             for context in candidate_contexts:
 
+                print("Checking for context: " ,context)
+
                 temp = 0
 
                 for a in ["0", "1"]:
                     for b in ["0", "1"]:
-
                         # we are giving the contexts in INVERTED order!
-                        temp = max(temp, abs(p(a, context[:-1], s) - p(a, context, s)))
+                        # equation is DELTA = ABS(term1 - term2)
+                        term_1 = p(a, context, s)
+                        term_2 = p(a, context + b, s)
+                        delta = abs(term_1 - term_2)   
+                        temp = max(temp, delta)
+
+
+                        print("Delta = ",delta)
+                        print("P("+ a + "|" + context + ")", term_1)
+                        print("P("+ a + "|" + context + b + ")", term_2)
 
                 if (temp < eps):
-                    # Prune this level of tree
-                    discarted.append(context)
-                    #print(context, "is not a context")
+
+
+                    if(len(context)==1):
+                        context_tree.append(context)
+                    else:  
+                        discarted.append(context)
+
+                    print("Prune children of ", context)
                 else:
-                    context_tree.append(context)
+                    print(context , "IS not a context, adding its children to tree")
 
-                candidate_contexts = generate_next_level(discarted)
+                    context_tree.append(context + "1")
+                    context_tree.append(context + "0")
 
-                discarted = []
+            candidate_contexts = discarted
+
+            if(not candidate_contexts):
+                break;
+
+            print("New candidates" , candidate_contexts)
+
 
         # Print final context tree
         print("Final Context Tree: ")
