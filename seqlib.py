@@ -25,15 +25,6 @@ def generate_candidates(size):
     # Generate candidates on last level of context tree
     return ["".join(seq) for seq in itertools.product("01", repeat= size - 1)]
 
-
-def generate_next_level(removed_contexts):
-    # for each string which is not a context,
-    # we remove it's last digit (inverted notation) and create
-    # a new list of context candidates
-    # we use set to get only unique new contexts
-    return list(set((map((lambda s: s[:-1]), removed_contexts))))
-
-
 def p(char, context, s):
     # calculate max likelihood of P (char | context),
     # context is GIVEN in inverted order!!!!

@@ -1,10 +1,10 @@
 
 {"trees":
 		[{"height": 2,
-			"contexts":{"1":0.375, "00":0.33, "01":0.33},
+			"contexts":{"1":0.375, "00":0.6, "01":0.4},
 			"outdir": "tree01",
 			"iniseq": "01"}
 		],
 "nsamples": 5,
-"sizesample":100000,
-"eps": 0.001}
+"sizesample":1000,
+"eps": 0.051}
