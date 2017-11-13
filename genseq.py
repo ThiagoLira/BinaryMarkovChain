@@ -19,7 +19,6 @@ ssample=params['sizesample']
 print('******Generating '+str(nsamples)+ ' samples for ' + str(ntrees)+' trees******')
 
 for t in range(0,ntrees):
-    random.seed(1337)
 
     #create output directory if it does not exist.
     outdir = params['trees'][t]['outdir']
@@ -28,48 +27,34 @@ for t in range(0,ntrees):
     # initial sequence
     iniseq = params['trees'][t]['iniseq']
 
-
     # probability of 0 given contexts
     contexts = params['trees'][t]['contexts']
+    print(contexts)
     #create nsamples
     for ns in range(0, nsamples):
         # create file or overwrites it
         f = open("samples/"+outdir+"/t"+str(t)+"sample"+str(ns)+".sample", "w+")
-        #
-        # Buffer with last entries in sequence
-        # we start with some initial conditions
-        s = iniseq
 
-        # same initial conditions on file
-        for digit in s:
-            f.write(digit)
+        # we start with the initial conditions
+        s = iniseq
 
         # we begin with 2 characters already written on the string
         count = len(s)
 
         # Simulate Markov Chain!
-        while (count < ssample + 2):
-
+        while (count < ssample + len(iniseq)):
             rand = random.uniform(0, 1)
-
             present_context = ""
-
-            i = 0
-            # go back on sequence until we find something
-            # that is a context to generate next character
-            while (present_context not in contexts):
-                present_context = present_context + s[len(s) -1 - i]
+            i=1
+            while (present_context not in contexts):                
+                present_context = present_context+s[-i]
                 i = i + 1
-            # remove first char from buffer s and add new char
-            # our buffer will never have more chars than 2
+
             if (rand < contexts[present_context]):
-                f.write("0")
-                s = s[1:] + "0"
+                s = s + "0"
             else:
-                s = s[1:] + "1"
-                f.write("1")
-
+                s = s + "1"
             count = count + 1
-
+        f.write(s)
         f.close()
 print('--------Successful. See the samples in the files *.sample--------')

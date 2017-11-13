@@ -1,0 +1,16 @@
+{"trees":
+        [{"height": 3,
+            "contexts":{
+              "000": 0.4, "001": 0.4, "01": 0.2,
+              "111": 0.9, "110": 0.2, "10": 0.2
+              },
+            "outdir": "treefinal1",
+            "iniseq": "101"},
+            {"height": 2,
+            "contexts":{"0":0.4, "10":0.4, "11":0.6},
+            "outdir": "treefinal2",
+            "iniseq": "11"}
+        ],
+"nsamples": 5,
+"sizesample":1000,
+"eps": 0.05}
